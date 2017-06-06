@@ -18,6 +18,23 @@ defmodule SafeMachine do
       def get_state_transitions do
         @state_transitions
       end
+
+      # Recusively do a transition until done
+      def fully_transition(%__MODULE__{state: start} = obj) do
+        if to_state = get_state_transitions()[start] do
+          a = do_transition(obj, start, to_state)
+          IO.inspect(obj)
+          IO.inspect(start)
+          IO.inspect(to_state)
+          IO.inspect(a)
+          case a do
+            {:ok, obj} -> fully_transition(obj)
+            {:error, err} -> {:error, err, obj}
+          end
+        else
+          {:ok, obj}
+        end
+      end
     end
   end
 

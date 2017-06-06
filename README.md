@@ -13,7 +13,7 @@ end
 # Include the SafeMachine DSL
 use SafeMachine
 
-#
+
 # Create your first transition
 defmodule Animal do
   deftransition(%Animal{state: :puppy} = animal, to: :dog) do
@@ -28,8 +28,7 @@ IO.inspect(result)
 # > %Animal{state: :dog, name: "Alfred"}
 
 
-#
-# What about if we throw during a transition? (note the use of pattern matching)
+# What about if you throw during a transition? Note the use of pattern matching.
 defmodule Animal do
   deftransition(%Animal{state: :puppy, age: 0} = animal, to: :dog) do
     throw :this_puppy_isnt_old_enough
@@ -41,8 +40,7 @@ IO.inspect(result)
 # > :this_puppy_isnt_old_enough
 
 
-#
-# It's possible to use complete struct pattern matching and guards
+# You can also to use complete struct pattern matching and guards
 defmodule Animal do
   deftransition(%Animal{state: :puppy, age: age} = animal, to: :dog) when age > 2 do
     %{animal | age: age * 2}
@@ -54,8 +52,7 @@ IO.inspect(result)
 # > :this_puppy_isnt_old_enough
 
 
-#
-# We can create a linear transition
+# You can create a series of transitions, and run them all
 defmodule Animal do
   deftransition(%Animal{state: :dog} = animal, to: :wolf)
 end
@@ -65,14 +62,13 @@ IO.inspect(result)
 # > %Animal{state: :wolf, name: "Alfred"}
 
 
-# Which can safely fail part-way
+# This can safely fail part-way
 {:error, result} = Animal.fully_transition(%Animal{age: 0})
 IO.inspect(result)
 # > :this_puppy_isnt_old_enough
 
 
-#
-# We can check out all possible
+# Checking all existing transitions
 IO.inspect(Animal.get_state_transitions())
 # > %{puppy: :dog, dog: :wolf}
 ```

@@ -35,13 +35,14 @@ defmodule Animal do
   end
 
   deftransition(%Animal{state: :puppy} = dog, to: :dog)
+  deftransition(%Animal{state: :dog} = dog, to: :wolf)
+
 
   # FIXME: not yet handled, use of special catch conditions
   deftransition(%Animal{state: :dog, name: "Handled throw"} = dog, to: :wolf) do
     throw [:not_a_wolf, "Too young"]
   catch
-    [:not_a_wolf, reason] ->
-      IO.puts "SAFE ERROR: not_a_wolf, #{reason}."
+    [:not_a_wolf, _] -> [:not_a_wolf, "It just didn't work out"]
   end
 
   deftransition(%Animal{state: :dog, name: "Unhandled throw"} = dog, to: :wolf) do
@@ -96,6 +97,16 @@ defmodule SafeMachineTest do
   test "transition with side effects" do
     doge = %Animal{name: "Empty block"}
     assert {:ok, %Animal{name: "Empty block", state: :dog}} == Animal.do_transition(doge, :puppy, :dog)
+  end
+
+  test "fully_transition with success" do
+    doge = %Animal{name: "Regular"}
+    assert {:ok, %Animal{name: "Regular", state: :wolf}} == Animal.fully_transition(doge)
+  end
+
+  test "fully_transition with error part-way" do
+    doge = %Animal{name: "Conditional", level: 1}
+    assert {:error, [:something_happened], doge} == Animal.fully_transition(doge)
   end
 
   #   # Logger.info("Initial struct: " <> inspect(doge))
