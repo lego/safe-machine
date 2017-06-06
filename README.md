@@ -47,9 +47,9 @@ defmodule Animal do
   end
 end
 
-{:error, result} = Animal.do_transition(%Animal{age: 0}, :puppy, :dog)
+{:ok, result} = Animal.do_transition(%Animal{age: 2}, :puppy, :dog)
 IO.inspect(result)
-# > :this_puppy_isnt_old_enough
+# > %Animal{state: :dog, age: 4}
 
 
 # You can create a series of transitions, and run them all
@@ -78,7 +78,6 @@ IO.inspect(Animal.get_state_transitions())
 - `when` guard support on transitions
 - top-level `catch`, `else`, `rescue`, and `after` block support
 - static analysis for linear states (or an option to allow circular states)
-- add `fully_transition` behaviour
 - `get_state_transitions` with better expansion of matching conditions, as opposed to only state `from -> to` transitions
 
 
